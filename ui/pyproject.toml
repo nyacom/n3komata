@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "n3komata-bc250"
+version = "0.1.0"
+description = "A BC-250-focused CLI and local chat frontend for llama.cpp"
+requires-python = ">=3.11"
+dependencies = []
+
+[project.scripts]
+n3k = "n3komata_ui.cli:main"
+
+[tool.setuptools]
+packages = ["n3komata_ui"]
+include-package-data = true
+
+[tool.setuptools.package-dir]
+"" = "."
+
+[tool.setuptools.package-data]
+n3komata_ui = ["web/*.html", "web/*.css", "web/*.js", "web/img/*.png"]
+

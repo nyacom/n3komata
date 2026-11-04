@@ -1,0 +1,8 @@
+/models/*.gguf
+/engine/llama.cpp-n3k/
+/engine/.llama.cpp-n3k-*/
+/engine/llama.cpp-n3k/build/
+/ui/.venv/
+/ui/*.egg-info/
+__pycache__/
+*.py[cod]

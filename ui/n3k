@@ -1,0 +1,4 @@
+#!/usr/bin/env python3
+from n3komata_ui.cli import main
+
+raise SystemExit(main())

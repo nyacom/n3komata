@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>N3komata</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body data-profile="__PROFILE_ID__">
+  <header>
+    <div class="brand">
+      <img class="logo" src="/img/logo.png" alt="">
+      <div class="brand-copy"><strong>N3komata</strong><br><small>SSD-backed inference engine for BC-250</small></div>
+      <span class="brand-divider" aria-hidden="true">|</span>
+      <span class="app-version">v__APP_VERSION__</span>
+    </div>
+    <div class="model-picker">
+      <label for="model-select">Model</label>
+      <select id="model-select" aria-label="Select model profile"></select>
+      <button class="secondary" id="load-model" type="button">Load</button>
+    </div>
+    <span id="profile">__PROFILE_NAME__</span><span id="status">Loading engine</span>
+  </header>
+  <section class="monitor" id="system-monitor" aria-label="System monitor">
+    <div class="monitor-tab-row">
+      <button class="monitor-tab" id="monitor-toggle" type="button" aria-controls="monitor-content" aria-expanded="true">
+        <span class="monitor-tab-grip" aria-hidden="true"></span>
+        <svg viewBox="0 0 20 20" aria-hidden="true"><path d="m5 7.5 5 5 5-5"></path></svg>
+        <span>System monitor</span>
+      </button>
+      <span id="monitor-source">Waiting for telemetry</span>
+    </div>
+    <div id="monitor-content" class="monitor-content">
+    <div class="monitor-grid">
+      <article class="metric-card paired-metric-card">
+        <div class="metric-heading"><span class="metric-label">GPU activity</span></div>
+        <small id="gpu-detail" class="metric-detail">BC-250 register telemetry</small>
+        <strong id="gpu-gfx">—</strong><span class="metric-sub">GFX active</span>
+        <span class="metric-label power-label">SPI activity</span>
+        <strong id="gpu-spi">—</strong><span class="metric-sub">SPI busy</span>
+        <div class="paired-charts">
+          <svg id="chart-gpu-gfx" class="trend-chart paired-chart gpu-line" viewBox="0 0 220 142" preserveAspectRatio="xMinYMid meet" role="img" aria-label="GPU graphics activity history"></svg>
+          <svg id="chart-gpu-spi" class="trend-chart paired-chart spi-line" viewBox="0 0 220 142" preserveAspectRatio="xMinYMid meet" role="img" aria-label="GPU SPI activity history"></svg>
+        </div>
+      </article>
+      <article class="metric-card">
+        <span class="metric-label">CPU</span>
+        <strong id="cpu-load">—</strong><span class="metric-sub">system busy</span>
+        <svg id="chart-cpu" class="trend-chart tall-chart cpu-line" viewBox="0 0 220 296" preserveAspectRatio="xMinYMid meet" role="img" aria-label="CPU activity history"></svg>
+      </article>
+      <article class="metric-card gpu-sensors-card paired-metric-card">
+        <div class="metric-heading"><span class="metric-label">GPU temperature</span></div>
+        <small class="metric-detail" title="amdgpu hwmon · power average">amdgpu hwmon · power average</small>
+        <strong id="gpu-temp">—</strong><span id="gpu-temp-label" class="metric-sub">sensor unavailable</span>
+        <span class="metric-label power-label">GPU power</span>
+        <strong id="gpu-power">—</strong><span id="gpu-power-label" class="metric-sub">sensor unavailable</span>
+        <div class="paired-charts">
+          <svg id="chart-gpu-temp" class="trend-chart paired-chart gpu-temp-line" viewBox="0 0 220 142" preserveAspectRatio="xMinYMid meet" role="img" aria-label="GPU temperature history"></svg>
+          <svg id="chart-gpu-power" class="trend-chart paired-chart gpu-power-line" viewBox="0 0 220 142" preserveAspectRatio="xMinYMid meet" role="img" aria-label="GPU power history"></svg>
+        </div>
+      </article>
+      <article class="metric-card">
+        <span class="metric-label">System memory</span>
+        <strong id="ram-used">—</strong><span id="ram-percent-label" class="metric-sub">used / total</span>
+        <strong id="ram-available">—</strong><span class="metric-sub">available</span>
+        <svg id="chart-ram" class="trend-chart tall-chart ram-line" viewBox="0 0 220 296" preserveAspectRatio="xMinYMid meet" role="img" aria-label="RAM use history"></svg>
+      </article>
+      <article class="metric-card">
+        <span class="metric-label">GTT memory</span>
+        <strong id="gtt-used">—</strong><span id="gtt-percent-label" class="metric-sub">used / total</span>
+        <svg id="chart-gtt" class="trend-chart tall-chart gtt-line" viewBox="0 0 220 296" preserveAspectRatio="xMinYMid meet" role="img" aria-label="GTT use history"></svg>
+      </article>
+     <article class="metric-card">
+        <span class="metric-label">NVMe read</span>
+        <strong id="disk-read">—</strong><span id="disk-devices" class="metric-sub">waiting for counters</span>
+        <svg id="chart-disk" class="trend-chart tall-chart disk-line" viewBox="0 0 220 296" preserveAspectRatio="xMinYMid meet" role="img" aria-label="NVMe read rate history"></svg>
+      </article>
+      <article class="metric-card context-card">
+        <span class="metric-label">Context used · busiest slot</span>
+        <strong id="context-used">— / —</strong><span id="context-detail" class="metric-sub">waiting for slot data</span>
+        <span id="prompt-cache" class="metric-sub">Prompt cache: waiting for slot data</span>
+        <small>estimate</small>
+        <svg id="chart-context" class="trend-chart tall-chart context-line" viewBox="0 0 220 296" preserveAspectRatio="xMinYMid meet" role="img" aria-label="Context occupancy history"></svg>
+      </article>
+      <!--
+      <article class="metric-card system-card">
+        <span class="metric-label">System</span>
+        <strong id="system-host">—</strong><span id="system-kernel" class="metric-sub">—</span>
+        <span id="system-gpu" class="metric-sub">—</span>
+      </article>
+      -->
+      <article class="metric-card inference-card">
+        <span class="metric-label">Live inference</span>
+        <strong id="live-rate">— tk/s</strong><span id="live-phase" class="metric-sub">Idle</span>
+        <span class="metric-label latest-label">Latest request</span>
+        <strong id="prompt-rate">—</strong><span class="metric-sub">prompt processing</span>
+        <strong id="generation-rate">—</strong><span class="metric-sub">decode generation</span>
+        <small id="reasoning-span">Reasoning span: —</small>
+        <svg id="chart-live-rate" class="trend-chart subplot-chart live-line" viewBox="0 0 220 142" preserveAspectRatio="xMinYMid meet" role="img" aria-label="Live generation rate history"></svg>
+      </article>
+    </div>
+    <p class="monitor-note">GPU activity is sampled from GRBM status flags; it is system-wide, not CU occupancy or per-process utilization. NVMe chart: 1.0 GB/s (PCIe 2.0 x2 encoded link ceiling) = 100%. Other charts show recent-value scales. Live tok/s uses generated-token deltas from llama-server slot stats; reasoning span is approximate.</p>
+    </div>
+  </section>
+  <main><div id="messages" aria-live="polite"></div></main>
+  <form id="form">
+    <div class="options">
+      <label for="maxTokens">Max tokens</label><input id="maxTokens" type="number" min="1" max="32768" value="1024">
+      <label class="unlimited-toggle" for="unlimitedTokens"><input id="unlimitedTokens" type="checkbox">Unlimited</label>
+      <span class="option-note">No token cap; stops at EOS, server limits, or Stop.</span>
+      <label class="reasoning-toggle" for="reasoning"><input id="reasoning" type="checkbox" __REASONING_CHECKED__>Reasoning</label>
+      <label for="reasoningEffort">Reasoning effort</label>
+      <select id="reasoningEffort">
+        <option value="default">Default</option>
+        <option value="minimal">Minimal</option>
+        <option value="low">Low</option>
+        <option value="medium">Medium</option>
+        <option value="high">High</option>
+        <option value="xhigh">Extra high</option>
+        <option value="max">Maximum</option>
+      </select>
+    </div>
+    <div class="edit-banner" id="edit-banner" role="status" aria-live="polite" hidden>
+      <span>Editing a sent message. Sending will replace it and remove later messages.</span>
+      <button class="edit-cancel" id="cancel-edit" type="button">Cancel</button>
+    </div>
+    <div class="controls">
+      <textarea id="prompt" placeholder="Type a message… (Enter to send, Shift+Enter for a new line)" required></textarea>
+      <div class="controls-actions" role="group" aria-label="Chat actions">
+        <button class="icon-button" id="send" type="submit" aria-label="Send message" title="Send message">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 2 11 13"></path><path d="m22 2-7 20-4-9-9-4Z"></path></svg>
+        </button>
+        <button class="icon-button secondary" id="clear" type="button" aria-label="Clear chat" title="Clear chat">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18"></path><path d="M8 6V4h8v2"></path><path d="m19 6-1 14H6L5 6"></path><path d="M10 11v5M14 11v5"></path></svg>
+        </button>
+      </div>
+    </div>
+  </form>
+  <script src="/app.js" defer></script>
+</body>
+</html>

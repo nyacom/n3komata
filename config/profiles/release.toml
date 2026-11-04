@@ -1,0 +1,43 @@
+[profiles.flashnext-q3-adaptive]
+name = "Qwen3.8 Flash Next IQ3_XXS"
+description = "BC-250 Vulkan profile with byte-aware expert-cache quotas and router-mass Dynamic K (4..6). Experimental preview."
+model_type = "moe"
+engine = "moe"
+model = "models/Qwen3.8-Flash-Next-GSQ-RCO-IQ3_XXS-00001-of-00002.gguf"
+cli = "engine/llama.cpp-n3k/build/bin/llama-cli"
+server = "engine/llama.cpp-n3k/build/bin/llama-server"
+build_dir = "engine/llama.cpp-n3k/build"
+build_targets = ["llama-cli", "llama-server"]
+default_context = 65536
+default_max_tokens = 1024
+default_reasoning = "on"
+api_model = "n3komata-flashnext-q3"
+cli_args = [
+  "--model", "{model}", "--ctx-size", "{context}", "--predict", "{max_tokens}",
+  "--batch-size", "4", "--ubatch-size", "4", "--gpu-layers", "99",
+  "-ncmoe", "48", "--moe-cache-mib", "1536", "-lm", "mmap", "--no-warmup",
+  "--cache-type-k", "f16", "--cache-type-v", "f16", "--jinja", "--reasoning", "{reasoning}",
+]
+server_args = [
+  "--model", "{model}", "--alias", "{api_model}", "--ctx-size", "{context}",
+  "--predict", "-1", "--batch-size", "4", "--ubatch-size", "4",
+  "--gpu-layers", "99", "-ncmoe", "48", "--moe-cache-mib", "1536", "-lm", "mmap",
+  "--no-warmup", "--cache-type-k", "f16", "--cache-type-v", "f16",
+  "--jinja", "--reasoning", "{reasoning}", "--no-ui",
+]
+clear_env_prefixes = ["N3KOMATA_MOE_", "N3KOMATA_VK_", "N3KOMATA_PREFETCH_", "N3KOMATA_DISABLE_MMAP_PREFETCH"]
+
+[profiles.flashnext-q3-adaptive.env]
+N3KOMATA_MOE_DYNAMIC_K = "router"
+N3KOMATA_MOE_DYNAMIC_K_MIN = "4"
+N3KOMATA_MOE_DYNAMIC_K_MAX = "6"
+N3KOMATA_MOE_DYNAMIC_K_MASS = "0.60"
+N3KOMATA_MOE_DYNAMIC_K_SKIP_ZERO = "1"
+N3KOMATA_MOE_DYNAMIC_K_DEVICE = "1"
+N3KOMATA_MOE_LAYER_CACHE_QUOTA = "extra-slots"
+N3KOMATA_MOE_LAYER_CACHE_EXTRA_SLOTS = "8:1,12:2,13:1,20:1,30:1,36:1,38:1,45:1,46:1"
+N3KOMATA_MOE_PREFETCH = "1"
+N3KOMATA_DISABLE_MMAP_PREFETCH = "1"
+N3KOMATA_PREFETCH_COALESCE_GAP_BYTES = "524288"
+N3KOMATA_MOE_UPLOAD_MODE = "batch-direct"
+N3KOMATA_VK_DIRECT_COPY_THREADS = "2"
